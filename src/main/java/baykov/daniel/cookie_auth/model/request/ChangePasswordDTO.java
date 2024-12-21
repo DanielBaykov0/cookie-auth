@@ -11,8 +11,8 @@ import lombok.ToString;
 public class ChangePasswordDTO {
 
     @NotEmpty(message = "Password should not be null or empty")
-    String password;
+    private String password;
 
     @NotEmpty(message = "Matching Password should not be null or empty")
-    String matchingPassword;
+    private String matchingPassword;
 }

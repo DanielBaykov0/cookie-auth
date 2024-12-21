@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,7 +20,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "token_types")
+@Table(name = "bd_auth_token_types")
 public class TokenType extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -27,16 +28,12 @@ public class TokenType extends BaseEntity {
     private TokenTypeEnum name;
 
     @Getter
+    @RequiredArgsConstructor
     public enum TokenTypeEnum {
-        ACCESS("access-token"),
         CONFIRMATION("confirmation-token"),
         VERIFICATION("verification-token"),
         RESET("reset-token");
 
         private final String value;
-
-        TokenTypeEnum(String value) {
-            this.value = value;
-        }
     }
 }

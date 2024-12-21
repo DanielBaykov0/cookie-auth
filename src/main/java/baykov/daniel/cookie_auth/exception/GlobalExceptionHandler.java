@@ -1,9 +1,7 @@
 package baykov.daniel.cookie_auth.exception;
 
-import baykov.daniel.cookie_auth.model.base.StatusFieldError;
 import baykov.daniel.cookie_auth.model.base.StatusMessage;
 import baykov.daniel.cookie_auth.model.base.StatusMessageException;
-import baykov.daniel.cookie_auth.model.base.StatusObjectError;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -36,12 +34,11 @@ public class GlobalExceptionHandler {
         StatusMessage errorBody = new StatusMessage(1, "VALIDATION_ERROR");
 
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            StatusFieldError statusFieldError = new StatusFieldError(fieldError);
-            errorBody.addFieldError(statusFieldError);
+            errorBody.addFieldError(fieldError);
         }
 
         for (ObjectError globalError : bindingResult.getGlobalErrors()) {
-            errorBody.addGlobalError(new StatusObjectError(globalError));
+            errorBody.addGlobalError(globalError);
         }
 
         return errorBody;

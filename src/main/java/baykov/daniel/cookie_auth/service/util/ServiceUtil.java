@@ -5,8 +5,10 @@ import baykov.daniel.cookie_auth.entity.Token;
 import baykov.daniel.cookie_auth.model.base.StatusMessageException;
 import baykov.daniel.cookie_auth.repository.RoleRepository;
 import baykov.daniel.cookie_auth.repository.TokenRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -69,5 +71,14 @@ public class ServiceUtil {
         }
 
         log.info("Token check for validity completed.");
+    }
+
+    public String getRefererHeader(HttpServletRequest request) {
+        String referer = request.getHeader(HttpHeaders.REFERER);
+        if (referer != null && !referer.isEmpty()) {
+            return referer;
+        }
+
+        return "no header";
     }
 }

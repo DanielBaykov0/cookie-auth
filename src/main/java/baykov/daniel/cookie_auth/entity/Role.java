@@ -19,7 +19,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "roles")
+@Table(name = "bd_auth_roles")
 public class Role extends BaseEntity {
 
     @Column(nullable = false, unique = true)

@@ -7,7 +7,6 @@ import baykov.daniel.cookie_auth.model.request.ForgotPasswordDTO;
 import baykov.daniel.cookie_auth.model.request.LoginDTO;
 import baykov.daniel.cookie_auth.model.request.RegisterDTO;
 import baykov.daniel.cookie_auth.model.request.VerificationRequestDTO;
-import baykov.daniel.cookie_auth.security.util.JWTTokenProvider;
 import baykov.daniel.cookie_auth.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,8 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final JWTTokenProvider jwtTokenProvider;
-    
+
     @PostMapping(value = "/register")
     public ResponseEntity<StatusMessage> register(@Valid @RequestBody RegisterDTO registerDTO) {
         log.info("Correlation ID: {}. Received request to register a new user.", "correlationId");
@@ -45,18 +43,18 @@ public class AuthenticationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    
+
     @PostMapping(value = "/login")
-    public ResponseEntity<StatusMessage> login(@Valid @RequestBody LoginDTO loginDTO,  HttpServletResponse response) {
+    public ResponseEntity<StatusMessage> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         log.info("Correlation ID: {}. Received login request for user: {}.", "correlationId", loginDTO.getEmail());
 
-        StatusMessage statusMessage = authenticationService.login(loginDTO, response);
+        StatusMessage statusMessage = authenticationService.login(loginDTO, request, response);
 
         log.info("Correlation ID: {}. User login successful for user: {}.", "correlationId", loginDTO.getEmail());
         return ResponseEntity.ok(statusMessage);
     }
 
-    
+
     @PostMapping("/verify-code")
     public ResponseEntity<Boolean> verifyCode(
             @Valid @RequestBody VerificationRequestDTO verificationRequestDTO, Authentication authentication) {
@@ -67,7 +65,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(verificationSuccessful);
     }
 
-    
+
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @GetMapping("/me")
     public ResponseEntity<String> currentUser(Authentication authentication) {
@@ -92,7 +90,7 @@ public class AuthenticationController {
 //        return ResponseEntity.ok(currentUserName);
 //    }
 
-    
+
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @PostMapping("/logout")
     public ResponseEntity<StatusMessage> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -104,7 +102,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(statusMessage);
     }
 
-    
+
 //    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
 //    @PostMapping("/refresh-token")
 //    public ResponseEntity<JwtRefreshResponseDTO> refreshToken(@Valid @RequestBody JwtRefreshRequestDTO refreshRequestDTO) {
@@ -116,7 +114,7 @@ public class AuthenticationController {
 //        return ResponseEntity.ok(responseDTO);
 //    }
 
-    
+
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @PatchMapping("/change-password")
     public ResponseEntity<StatusMessage> changePassword(
@@ -130,7 +128,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
-    
+
     @PostMapping("/forgot")
     public ResponseEntity<StatusMessage> forgotPassword(@Valid @RequestBody ForgotPasswordDTO forgotPasswordDTO) {
         log.info("Forgot password request received. Correlation ID: {}", "correlationId");
@@ -141,7 +139,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
-   
+
     @PostMapping("/resend-forgot")
     public ResponseEntity<StatusMessage> resendForgotPassword(@RequestParam String token) {
         log.info("Resend forgot password request received. Correlation ID: {}", "correlationId");
@@ -151,7 +149,7 @@ public class AuthenticationController {
         log.info("Resend forgot password request completed. Correlation ID: {}", "correlationId");
         return ResponseEntity.ok(response);
     }
-    
+
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @PostMapping("/send-email-verification")
     public ResponseEntity<StatusMessage> sendEmailVerification(Authentication authentication) {
@@ -163,7 +161,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 
-    
+
     @GetMapping("/verify-email")
     public ResponseEntity<StatusMessage> verifyEmail(@RequestParam String token) {
         log.info("Verification email request received. Correlation ID: {}", "correlationId");

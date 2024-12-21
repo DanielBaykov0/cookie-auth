@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
@@ -15,5 +14,5 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
     Long findUserIdByTokenId(String tokenId);
 
     @Query("SELECT t FROM Token t WHERE t.user.id = :userId AND t.tokenType.id = :tokenTypeId ORDER BY t.createdAt DESC LIMIT 1")
-    String findLatestTokenByUserIdAndTokenTypeId(UUID userId, UUID tokenTypeId);
+    String findLatestTokenByUserIdAndTokenTypeId(Long userId, Long tokenTypeId);
 }

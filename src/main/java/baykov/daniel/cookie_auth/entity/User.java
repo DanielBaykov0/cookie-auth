@@ -26,7 +26,7 @@ import java.util.Set;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "users")
+@Table(name = "bd_auth_users")
 public class User extends BaseEntity {
 
     @Column(nullable = false)
@@ -45,7 +45,7 @@ public class User extends BaseEntity {
     private boolean isEnabled;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinTable(name = "user_role",
+    @JoinTable(name = "bd_auth_users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;

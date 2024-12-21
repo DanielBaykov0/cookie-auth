@@ -7,7 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +20,10 @@ import java.util.List;
 @Builder
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class StatusMessage {
+public class StatusMessage implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1905122041950251207L;
 
 	public static final String SUCCESS_CODE = "SUCCESS";
 	public static final String ERROR_CODE = "ERROR";
@@ -34,10 +40,10 @@ public class StatusMessage {
 	protected int httpStatusCode;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	protected List<StatusFieldError> fieldErrors;
+	private List<FieldError> fieldErrors;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	protected List<StatusObjectError> globalErrors;
+	private List<ObjectError> globalErrors;
 
 	public StatusMessage() {
 		super();
@@ -106,11 +112,11 @@ public class StatusMessage {
 				.httpStatusCode(httpStatusCode);
 	}
 
-	public void addFieldError(StatusFieldError fieldError) {
+	public void addFieldError(FieldError fieldError) {
 		this.fieldErrors.add(fieldError);
 	}
 
-	public void addGlobalError(StatusObjectError globalError) {
+	public void addGlobalError(ObjectError globalError) {
 		this.globalErrors.add(globalError);
 	}
 }

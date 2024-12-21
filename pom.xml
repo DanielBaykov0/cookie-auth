@@ -11,10 +11,10 @@
 	</parent>
 
 	<groupId>baykov.daniel</groupId>
-	<artifactId>cookie-auth</artifactId>
+	<artifactId>bd-cookie-auth</artifactId>
 	<version>1.0.0</version>
 	<packaging>war</packaging>
-	<name>cookie-auth</name>
+	<name>bd-cookie-auth</name>
 	<description>Spring Boot Cookie Authentication</description>
 
 	<properties>

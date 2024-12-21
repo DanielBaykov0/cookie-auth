@@ -24,14 +24,11 @@ import java.util.UUID;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "tokens")
+@Table(name = "bd_auth_tokens")
 public class Token extends BaseEntity {
 
     @Column(nullable = false)
     private String tokenId;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime expiresAt;
@@ -48,7 +45,6 @@ public class Token extends BaseEntity {
 
     public Token(User user, TokenType tokenType) {
         this.setTokenId(UUID.randomUUID().toString());
-        this.setCreatedAt(LocalDateTime.now());
         this.setExpiresAt(LocalDateTime.now().plusMinutes(60));
         this.setUser(user);
         this.setTokenType(tokenType);

@@ -11,7 +11,7 @@ import baykov.daniel.cookie_auth.model.request.RegisterDTO;
 import baykov.daniel.cookie_auth.model.request.VerificationRequestDTO;
 import baykov.daniel.cookie_auth.repository.TokenRepository;
 import baykov.daniel.cookie_auth.repository.UserRepository;
-import baykov.daniel.cookie_auth.security.util.JWTTokenProvider;
+import baykov.daniel.cookie_auth.security.util.AuthenticationTokenProvider;
 import baykov.daniel.cookie_auth.service.util.ServiceUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,7 +45,7 @@ public class AuthenticationService {
     private final TokenTypeService tokenTypeService;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JWTTokenProvider jwtTokenProvider;
+    private final AuthenticationTokenProvider jwtTokenProvider;
     private final TokenService tokenService;
 //    private final EmailBuilderService emailBuilderService;
 //    private final EmailService emailService;
@@ -80,7 +80,7 @@ public class AuthenticationService {
         return StatusMessage.success();
     }
 
-    public StatusMessage login(LoginDTO loginDTO, HttpServletResponse response) {
+    public StatusMessage login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         log.info("Received login request for user with email: {}", loginDTO.getEmail());
 
         User user = userRepository.findByEmailIgnoreCase(loginDTO.getEmail())
@@ -93,7 +93,7 @@ public class AuthenticationService {
                                 loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        jwtTokenProvider.addCookie(response, authentication, TokenType.TokenTypeEnum.ACCESS);
+        jwtTokenProvider.addCookie(request, response, authentication);
         userRepository.save(user);
 
         log.info("User logged in successfully without MFA secret: {}", loginDTO.getEmail());
@@ -101,7 +101,7 @@ public class AuthenticationService {
     }
 
     public StatusMessage logout(HttpServletRequest request, HttpServletResponse response) {
-        jwtTokenProvider.removeCookie(request, response, TokenType.TokenTypeEnum.ACCESS.getValue());
+        jwtTokenProvider.removeCookies(request, response);
         SecurityContextHolder.clearContext();
         log.info("User logged out successfully.");
         return StatusMessage.success();

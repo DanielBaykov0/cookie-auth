@@ -1,7 +1,6 @@
 package baykov.daniel.cookie_auth.security.filter;
 
-import baykov.daniel.cookie_auth.entity.TokenType;
-import baykov.daniel.cookie_auth.security.util.JWTTokenProvider;
+import baykov.daniel.cookie_auth.security.util.AuthenticationTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -22,17 +21,26 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
+import static baykov.daniel.cookie_auth.constant.CookieConstants.ACCESS;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JWTTokenProvider jwtTokenProvider;
+    private final AuthenticationTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        Optional<Cookie> optionalCookie = jwtTokenProvider.extractCookie(request, TokenType.TokenTypeEnum.ACCESS.getValue());
+        String requestUri = request.getRequestURI().replace(request.getContextPath(), "");
+
+        if (requestUri.startsWith("/api/v1/auth/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Optional<Cookie> optionalCookie = jwtTokenProvider.extractCookie(request, ACCESS.getValue());
 
         if (optionalCookie.isPresent()) {
             Cookie cookie = optionalCookie.get();
